@@ -86,6 +86,11 @@
     "use-lifecycle-interface": true,
     "use-pipe-transform-interface": true
   },
+  "linterOptions": {
+    "exclude": [
+      "src/environments/*"
+    ]
+  },
   "rulesDirectory": [
     "codelyzer"
   ]

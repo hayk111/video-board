@@ -1,28 +1,23 @@
-import {Component, ViewChild, ViewContainerRef, OnInit} from "@angular/core";
-
-import { IStatusPanelParams } from "ag-grid-community";
-import {IFilterAngularComp} from "ag-grid-angular";
+import {Component, ElementRef} from '@angular/core';
+import {IHeaderAngularComp} from 'ag-grid-angular/main';
 
 @Component({
   selector: 'app-toggle-row-select',
   templateUrl: './toggle-row-select.component.html',
   styleUrls: ['./toggle-row-select.component.scss']
 })
-export class ToggleRowSelectComponent {
+export class ToggleRowSelectComponent implements IHeaderAngularComp {
+  private params: any;
 
-  private params: IStatusPanelParams;
-
-  agInit(params: IStatusPanelParams): void {
+  agInit(params) {
     this.params = params;
   }
 
-  ngOnInit() {
-    console.log("TCL: ToggleRowSelectComponent -> ngOnInit -> this", this)
-    console.log("TCL: ToggleRowSelectComponent -> ngOnInit -> this.params", this.params)
-  }
-
-  onClick() : void {
-    console.log("TCL: ToggleRowSelectComponent -> this", this)
-    alert('Selected Row Count: ' + this.params.api.getSelectedRows())
+  onChange(e) {
+    if (e.target.checked) {
+      this.params.api.selectAll();
+    } else {
+      this.params.api.deselectAll();
+    }
   }
 }

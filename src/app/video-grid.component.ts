@@ -5,10 +5,9 @@ import { environment } from 'src/environments/environment.prod';
 import { map } from 'rxjs/operators';
 import * as moment from 'moment';
 
-import { ToggleRowSelectComponent } 
-  from './toggle-row-select/toggle-row-select.component';
+import { ToggleRowSelectComponent } from './toggle-row-select/toggle-row-select.component';
 
-import "ag-grid-enterprise";
+import 'ag-grid-enterprise';
 
 @Component({
   selector: 'app-root',
@@ -18,10 +17,10 @@ import "ag-grid-enterprise";
 export class VideoGridComponent implements OnInit {
   @ViewChild('agGrid', {static: false}) agGrid: AgGridAngular;
   title = 'video-board';
-  
+
   private gridApi;
   private gridColumnApi;
-  
+
   private sideBar;
   private statusBar;
   private frameworkComponents;
@@ -34,52 +33,51 @@ export class VideoGridComponent implements OnInit {
     {
       hide: !this.checkAllVisible,
       headerName: '',
+      headerComponentFramework: ToggleRowSelectComponent,
       width: 40,
       editable: true,
-      field: 'check',
-      headerCheckboxSelection: true,
-      headerCheckboxSelectionFilteredOnly: false,        
       checkboxSelection: true,
+      field: 'check',
     },
     {
       cellRenderer: ({value}) => {
         const {url, height, width} = value;
         return `<img src='${url}' width='${width}' height='${height}'>`;
-      }, 
-      headerName: '', 
-      field: 'thumbnails', 
-      sortable: true, 
-      filter: true, 
-      width: 300,
+      },
+      headerName: '',
+      field: 'thumbnails',
+      sortable: true,
+      filter: true,
+      width: 125,
       enableRowGroup: true,
       enablePivot: true
     },
     {
       cellRenderer: ({value}) => {
         return `<time>${moment(value).format('YYYY-MM-DD, h:mm:ss a')}</time>`;
-      }, 
-      headerName: 'Published on', 
-      field: 'publishedAt', 
-      sortable: true, 
-      editable: true, 
-      filter: true, 
+      },
+      headerName: 'Published on',
+      field: 'publishedAt',
+      sortable: true,
+      editable: true,
+      filter: true,
       width: 300
     },
-    { 
-      headerName: 'Video Title', 
-      field: 'title', 
-      sortable: true, 
-      filter: true, 
-      editable: true, 
-      width: 300 
-    },
-    { 
-      headerName: 'Description', 
-      field: 'description', 
-      sortable: true, 
+    {
+      headerName: 'Video Title',
+      field: 'title',
+      sortable: true,
       filter: true,
-      editable: true, 
-      width: 300 
+      editable: true,
+      width: 300
+    },
+    {
+      headerName: 'Description',
+      field: 'description',
+      sortable: true,
+      filter: true,
+      editable: true,
+      width: 300
     },
   ];
 
@@ -90,19 +88,14 @@ export class VideoGridComponent implements OnInit {
     sortable: true,
     filter: true
   };
-  
-  constructor(private http: HttpClient) {
-    this.sideBar = "sidebar";
 
-    this.frameworkComponents = {
-      toggleRowSelectComponent: ToggleRowSelectComponent,
-    };
+  constructor(private http: HttpClient) {
+    this.sideBar = 'sidebar';
 
     this.statusBar = {
       statusPanels: [
-        { statusPanel: "agTotalRowCountComponent" },
-        { statusPanel: "agSelectedRowCountComponent" },
-        { statusPanel: "toggleRowSelectComponent" }
+        { statusPanel: 'agTotalRowCountComponent' },
+        { statusPanel: 'agSelectedRowCountComponent' },
       ]
     };
   }
@@ -112,7 +105,6 @@ export class VideoGridComponent implements OnInit {
       .pipe(
         map((res: any) => res.items),
         map((items) => {
-          console.log('res', items);
           return items.map(item => ({
             thumbnails: item.snippet.thumbnails.default,
             title: `https://www.youtube.com/watch?v=${item.id.videoId}`,
@@ -128,11 +120,11 @@ export class VideoGridComponent implements OnInit {
 
     if (params.column.colId === 'title') {
       contextMenu.unshift({
-          name: "New tab " + params.value,
-          action: function() {
-            window.open(params.value, "_blank");
+          name: 'New tab ' + params.value,
+          action() {
+            window.open(params.value, '_blank');
           },
-          icon: `<img class="new-tab-icon" src="/assets/icons/open-view-in-new-tab.png" />`
+          icon: `<img class='new-tab-icon' src='/assets/icons/open-view-in-new-tab.png' />`
       });
     }
 
@@ -142,7 +134,7 @@ export class VideoGridComponent implements OnInit {
   onGridReady(params) {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
-    
+
     params.api.sizeColumnsToFit();
   }
 

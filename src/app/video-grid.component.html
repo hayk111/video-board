@@ -1,11 +1,22 @@
 <ag-grid-angular 
   #agGrid
-  style="width: 100%; height: 500px;" 
+  style="width: 1200px; height: 500px; margin: auto; margin-top: 50px;" 
   class="ag-theme-balham"
   rowHeight="90"
   [rowData]="rowData | async" 
   [columnDefs]="columnDefs"
+  [defaultColDef]="defaultColDef"
+  [allowContextMenuWithControlKey]="true"
+  [getContextMenuItems]="getContextMenuItems"
+  [frameworkComponents]="frameworkComponents"
+  [statusBar]="statusBar"
   rowSelection="multiple"
   [autoGroupColumnDef]="autoGroupColumnDef"
+  (gridReady)="onGridReady($event)"
   >
 </ag-grid-angular>
+<div style="position: absolute; top: 10px; left: 50px; margin-top: 4px;">
+  <button (click)="toggleCheckUncheckAll()">
+    {{checkAllBtnName}}
+  </button>
+</div>

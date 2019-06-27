@@ -3,8 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { AgGridAngular } from 'ag-grid-angular';
 import { environment } from 'src/environments/environment.prod';
 import { map } from 'rxjs/operators';
-
 import * as moment from 'moment';
+
+import { ToggleRowSelectComponent } 
+  from './toggle-row-select/toggle-row-select.component';
+
+import "ag-grid-enterprise";
 
 @Component({
   selector: 'app-root',
@@ -14,28 +18,96 @@ import * as moment from 'moment';
 export class VideoGridComponent implements OnInit {
   @ViewChild('agGrid', {static: false}) agGrid: AgGridAngular;
   title = 'video-board';
-  rowData: any;
+  
+  private gridApi;
+  private gridColumnApi;
+  
+  private sideBar;
+  private statusBar;
+  private frameworkComponents;
+  private rowData: any;
+
+  private checkAllVisible = false;
+  private checkAllBtnName = 'Append select boxes';
 
   columnDefs = [
+    {
+      hide: !this.checkAllVisible,
+      headerName: '',
+      width: 40,
+      editable: true,
+      field: 'check',
+      headerCheckboxSelection: true,
+      headerCheckboxSelectionFilteredOnly: false,        
+      checkboxSelection: true,
+    },
     {
       cellRenderer: ({value}) => {
         const {url, height, width} = value;
         return `<img src='${url}' width='${width}' height='${height}'>`;
-      }, headerName: '', field: 'thumbnails', sortable: true, filter: true, checkboxSelection: true, width: 300
+      }, 
+      headerName: '', 
+      field: 'thumbnails', 
+      sortable: true, 
+      filter: true, 
+      width: 300,
+      enableRowGroup: true,
+      enablePivot: true
     },
     {
       cellRenderer: ({value}) => {
         return `<time>${moment(value).format('YYYY-MM-DD, h:mm:ss a')}</time>`;
-      }, headerName: 'Published on', field: 'publishedAt', sortable: true, editable: true, filter: true, width: 300
+      }, 
+      headerName: 'Published on', 
+      field: 'publishedAt', 
+      sortable: true, 
+      editable: true, 
+      filter: true, 
+      width: 300
     },
-    {headerName: 'Video Title', field: 'title', sortable: true, filter: true, editable: true, width: 300 },
-    {headerName: 'Description', field: 'description', sortable: true, filter: true, editable: true, width: 300 },
+    { 
+      headerName: 'Video Title', 
+      field: 'title', 
+      sortable: true, 
+      filter: true, 
+      editable: true, 
+      width: 300 
+    },
+    { 
+      headerName: 'Description', 
+      field: 'description', 
+      sortable: true, 
+      filter: true,
+      editable: true, 
+      width: 300 
+    },
   ];
 
-  constructor(private http: HttpClient) {}
+  defaultColDef = {
+    enableValue: true,
+    enableRowGroup: true,
+    enablePivot: true,
+    sortable: true,
+    filter: true
+  };
+  
+  constructor(private http: HttpClient) {
+    this.sideBar = "sidebar";
+
+    this.frameworkComponents = {
+      toggleRowSelectComponent: ToggleRowSelectComponent,
+    };
+
+    this.statusBar = {
+      statusPanels: [
+        { statusPanel: "agTotalRowCountComponent" },
+        { statusPanel: "agSelectedRowCountComponent" },
+        { statusPanel: "toggleRowSelectComponent" }
+      ]
+    };
+  }
 
   ngOnInit() {
-
     this.rowData = this.http.get(environment.dataUrl)
       .pipe(
         map((res: any) => res.items),
@@ -51,12 +123,37 @@ export class VideoGridComponent implements OnInit {
       );
   }
 
-/*   getSelectedRows() {
-    const selectedNodes = this.agGrid.api.getSelectedNodes();
-    console.log('TCL: VideoGridComponent -> getSelectedRows -> selectedNodes', selectedNodes)
-    const selectedData = selectedNodes.map( node => node.data );
-    const selectedDataStringPresentation = selectedData.map( node => node.make + ' ' + node.model).join(', ');
-    alert(`Selected nodes: ${selectedDataStringPresentation}`);
-  } */
+  getContextMenuItems(params) {
+    const contextMenu: any[] = ['copy', 'copyWithHeaders', 'paste', 'separator', 'export'];
 
+    if (params.column.colId === 'title') {
+      contextMenu.unshift({
+          name: "New tab " + params.value,
+          action: function() {
+            window.open(params.value, "_blank");
+          },
+          icon: `<img class="new-tab-icon" src="/assets/icons/open-view-in-new-tab.png" />`
+      });
+    }
+
+    return contextMenu;
+  }
+
+  onGridReady(params) {
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+    
+    params.api.sizeColumnsToFit();
+  }
+
+  toggleCheckUncheckAll() {
+    this.checkAllVisible = !this.checkAllVisible;
+    this.gridColumnApi.setColumnVisible('check', this.checkAllVisible);
+
+    if (!this.checkAllVisible) {
+      this.checkAllBtnName = 'Append select boxes';
+    } else {
+      this.checkAllBtnName = 'Remove select boxes';
+    }
+  }
 }

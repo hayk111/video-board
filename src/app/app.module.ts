@@ -6,10 +6,12 @@ import { AgGridModule } from 'ag-grid-angular';
 import { HttpClientModule } from '@angular/common/http';
 
 import 'ag-grid-enterprise';
+import { ToggleRowSelectComponent } from './toggle-row-select/toggle-row-select.component';
 
 @NgModule({
   declarations: [
-    VideoGridComponent
+    VideoGridComponent,
+    ToggleRowSelectComponent
   ],
   imports: [
     BrowserModule,
@@ -17,6 +19,6 @@ import 'ag-grid-enterprise';
     AgGridModule.withComponents([])
   ],
   providers: [],
-  bootstrap: [VideoGridComponent]
+  bootstrap: [VideoGridComponent, ToggleRowSelectComponent]
 })
 export class AppModule { }

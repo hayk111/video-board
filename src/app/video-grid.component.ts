@@ -15,7 +15,6 @@ import 'ag-grid-enterprise';
   styleUrls: ['./video-grid.component.scss']
 })
 export class VideoGridComponent implements OnInit {
-  @ViewChild('agGrid', {static: false}) agGrid: AgGridAngular;
   title = 'video-board';
 
   private gridApi;
